@@ -22,6 +22,23 @@ Model Context Protocol (MCP) server for Asana built with **TypeScript**, providi
    npm run build
    ```
 
+## Obtaining Your Asana Personal Access Token (`ASANA_TOKEN`)
+
+To use this MCP server, you need a Personal Access Token (PAT) from Asana:
+
+1. **Log in to Asana**: Open [app.asana.com](https://app.asana.com) and sign in to your account.
+2. **Open Developer Apps Console**:
+   - Direct link: Navigate to [https://app.asana.com/0/my-apps](https://app.asana.com/0/my-apps).
+   - Or via UI: Click your profile avatar (top-right corner) → **Settings** (or **My Settings**) → **Apps** tab → click **Manage developer apps** (or **Developer console**).
+3. **Generate Token**:
+   - Scroll down to the **Personal access tokens** section.
+   - Click **+ Create new token** (or **+ New access token**).
+   - Enter a description for the token (e.g., `asana-mcp-server`).
+   - Agree to the API Terms if prompted, then click **Create token**.
+4. **Copy the Token**:
+   - Copy the generated token immediately and store it securely (Asana will not show it again).
+   - Use this value for `ASANA_TOKEN` in your environment or MCP configuration (`mcp_config.json`).
+
 ## MCP Configuration
 
 Add the `asana` server to your MCP configuration file (`mcp_config.json`):
@@ -42,7 +59,7 @@ Add the `asana` server to your MCP configuration file (`mcp_config.json`):
 }
 ```
 
-> **Note**: Replace `<path_to_repository>` with the local path to this repository and `<your_asana_personal_access_token>` with your token generated from the [Asana Developer Console](https://app.asana.com/0/my-apps).
+> **Note**: Replace `<path_to_repository>` with the local path to this repository and `<your_asana_personal_access_token>` with your Personal Access Token obtained above.
 
 ## Development
 
