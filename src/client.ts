@@ -37,9 +37,35 @@ export function extractGid(input: string): string {
   return str;
 }
 
-export async function asanaFetch<T>(endpoint: string, params: Record<string, unknown> = {}): Promise<{ data: T; next_page?: { offset: string } }> {
+export interface AsanaFetchOptions {
+  method?: "GET" | "POST" | "PUT" | "DELETE";
+  params?: Record<string, unknown>;
+  data?: Record<string, unknown>;
+}
+
+function isFetchOptions(val: unknown): val is AsanaFetchOptions {
+  if (typeof val !== "object" || val === null) return false;
+  return "method" in val || "params" in val || "data" in val;
+}
+
+export async function asanaFetch<T>(
+  endpoint: string,
+  optionsOrParams: Record<string, unknown> | AsanaFetchOptions = {}
+): Promise<{ data: T; next_page?: { offset: string } }> {
   const token = getAsanaToken();
   const url = new URL(`https://app.asana.com/api/1.0/${endpoint}`);
+
+  let method = "GET";
+  let params: Record<string, unknown> = {};
+  let bodyData: Record<string, unknown> | undefined = undefined;
+
+  if (isFetchOptions(optionsOrParams)) {
+    method = optionsOrParams.method || "GET";
+    params = optionsOrParams.params || {};
+    bodyData = optionsOrParams.data;
+  } else {
+    params = optionsOrParams as Record<string, unknown>;
+  }
 
   for (const [k, v] of Object.entries(params)) {
     if (v !== undefined && v !== null) {
@@ -47,12 +73,22 @@ export async function asanaFetch<T>(endpoint: string, params: Record<string, unk
     }
   }
 
-  const response = await fetch(url.toString(), {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: "application/json",
-    },
-  });
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${token}`,
+    Accept: "application/json",
+  };
+
+  const fetchOptions: RequestInit = {
+    method,
+    headers,
+  };
+
+  if (bodyData && (method === "POST" || method === "PUT")) {
+    headers["Content-Type"] = "application/json";
+    fetchOptions.body = JSON.stringify({ data: bodyData });
+  }
+
+  const response = await fetch(url.toString(), fetchOptions);
 
   if (!response.ok) {
     const errorBody = await response.text();

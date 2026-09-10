@@ -71,9 +71,20 @@ export interface AsanaProject extends AsanaResource {
   }>;
 }
 
+export interface AsanaStory extends AsanaResource {
+  text?: string;
+  html_text?: string;
+  type?: string;
+  is_pinned?: boolean;
+  is_edited?: boolean;
+  created_at?: string;
+  created_by?: AsanaUser;
+}
+
 export interface AsanaProjectExport {
   exported_at: string;
   project: AsanaProject;
   sections: AsanaSection[];
   tasks: AsanaTask[];
 }
+
